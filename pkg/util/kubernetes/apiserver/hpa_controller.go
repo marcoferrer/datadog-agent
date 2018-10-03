@@ -150,9 +150,25 @@ func (c *AutoscalersController) processingLoop() {
 				if !c.le.IsLeader() {
 					continue
 				}
-				// Updating the metrics against Datadog should not affect the HPA pipeline.
+				// Updating the metrics against Datadog should not affect the HPA pipeline but we avoid querying
+				// metrics for which the HPA is not valid
 				// If metrics are temporarily unavailable for too long, they will become `Valid=false` and won't be evaluated.
-				c.updateExternalMetrics()
+				// check HPA is valid
+				hpaList, err := c.autoscalersLister.HorizontalPodAutoscalers(metav1.NamespaceAll).List(labels.Everything())
+				if err != nil {
+					log.Errorf("Could not list hpas: %v", err)
+					return
+				}
+				emList := []custommetrics.ExternalMetricValue{}
+				for _, h := range hpaList {
+					if !hpa.IsAbleToScale(h) {
+						log.Trace("HPA %s is not currently able to scale, skipping metrics update", h.Name)
+						continue
+					}
+					// only update metric for valid HPAs
+					emList = append(emList, hpa.Inspect(h)...)
+				}
+				c.updateExternalMetrics(emList)
 			case <-gcPeriodSeconds.C:
 				if !c.le.IsLeader() {
 					continue
@@ -183,13 +199,7 @@ func (h *AutoscalersController) pushToGlobalStore() error {
 	return err
 }
 
-func (h *AutoscalersController) updateExternalMetrics() {
-	emList, err := h.store.ListAllExternalMetricValues()
-	if err != nil {
-		log.Infof("Error while retrieving external metrics from the store: %s", err)
-		return
-	}
-
+func (h *AutoscalersController) updateExternalMetrics(emList []custommetrics.ExternalMetricValue) {
 	if len(emList) == 0 {
 		log.Debugf("No External Metrics to evaluate at the moment")
 		return
