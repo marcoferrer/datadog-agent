@@ -20,7 +20,7 @@ import (
 	"github.com/DataDog/datadog-agent/pkg/clusteragent/custommetrics"
 )
 
-func TestInspect(t *testing.T) {
+func TestGetExternalMetrics(t *testing.T) {
 	metricName := "requests_per_s"
 
 	testCases := map[string]struct {
@@ -93,7 +93,7 @@ func TestInspect(t *testing.T) {
 
 	for name, testCase := range testCases {
 		t.Run(name, func(t *testing.T) {
-			got := Inspect(testCase.hpa)
+			got := GetExternalMetrics(testCase.hpa)
 			assert.ElementsMatch(t, testCase.expected, got)
 		})
 	}

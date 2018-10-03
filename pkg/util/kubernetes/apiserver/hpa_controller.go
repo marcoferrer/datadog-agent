@@ -166,7 +166,7 @@ func (c *AutoscalersController) processingLoop() {
 						continue
 					}
 					// only update metric for valid HPAs
-					emList = append(emList, hpa.Inspect(h)...)
+					emList = append(emList, hpa.GetExternalMetrics(h)...)
 				}
 				c.updateExternalMetrics(emList)
 			case <-gcPeriodSeconds.C:
@@ -334,7 +334,7 @@ func (h *AutoscalersController) deleteAutoscaler(obj interface{}) {
 	deletedHPA, ok := obj.(*autoscalingv2.HorizontalPodAutoscaler)
 	if ok {
 		log.Debugf("Deleting Metrics from HPA %s/%s", deletedHPA.Namespace, deletedHPA.Name)
-		toDelete := hpa.Inspect(deletedHPA)
+		toDelete := hpa.GetExternalMetrics(deletedHPA)
 		h.store.DeleteExternalMetricValues(toDelete)
 		h.queue.Done(deletedHPA)
 		return
@@ -353,7 +353,7 @@ func (h *AutoscalersController) deleteAutoscaler(obj interface{}) {
 	}
 
 	log.Debugf("Deleting Metrics from HPA %s/%s", deletedHPA.Namespace, deletedHPA.Name)
-	toDelete := hpa.Inspect(deletedHPA)
+	toDelete := hpa.GetExternalMetrics(deletedHPA)
 	h.store.DeleteExternalMetricValues(toDelete)
 	h.queue.Done(deletedHPA)
 }
