@@ -20,9 +20,10 @@ const (
 )
 
 var (
-	relPyPath            = filepath.Join("..", "..", "embedded", "bin", pythonBin)
-	relTufConfigFilePath = filepath.Join("..", "..", tufConfigFile)
-	relTufPipCache       = filepath.Join("..", "..", "repositories", "cache")
+	relPyPath              = filepath.Join("..", "..", "embedded", "bin", pythonBin)
+	relTufConfigFilePath   = filepath.Join("..", "..", tufConfigFile)
+	relReqAgentReleasePath = filepath.Join("..", "..", reqAgentReleaseFile)
+	relTufPipCache         = filepath.Join("..", "..", "repositories", "cache")
 )
 
 func authorizedUser() bool {

@@ -18,9 +18,10 @@ const (
 )
 
 var (
-	relPyPath            = pythonBin
-	relTufConfigFilePath = filepath.Join("..", tufConfigFile)
-	tufPipCachePath      = filepath.Join("c:\\", "ProgramData", "Datadog", "repositories", "cache")
+	relPyPath              = pythonBin
+	relTufConfigFilePath   = filepath.Join("..", tufConfigFile)
+	relReqAgentReleasePath = filepath.Join("..", reqAgentReleaseFile)
+	tufPipCachePath        = filepath.Join("c:\\", "ProgramData", "Datadog", "repositories", "cache")
 )
 
 func authorizedUser() bool {
