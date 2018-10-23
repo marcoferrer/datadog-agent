@@ -14,22 +14,24 @@ import (
 
 var (
 	logsExpvars *expvar.Map
-	// LogsDecoded is the total number of decoded logs
-	LogsDecoded = expvar.Int{}
+	// LogsCollected is the total number of collected logs.
+	LogsCollected = expvar.Int{}
 	// LogsProcessed is the total number of processed logs.
 	LogsProcessed = expvar.Int{}
 	// LogsSent is the total number of sent logs.
 	LogsSent = expvar.Int{}
+	// LogsCommitted is the total number of committed logs.
+	LogsCommitted = expvar.Int{}
 	// DestinationErrors is the total number of network errors.
 	DestinationErrors = expvar.Int{}
-	// TODO: Add LogsCollected for the total number of collected logs.
 )
 
 func init() {
 	logsExpvars = expvar.NewMap("logs-agent")
-	logsExpvars.Set("LogsDecoded", &LogsDecoded)
+	logsExpvars.Set("LogsCollected", &LogsCollected)
 	logsExpvars.Set("LogsProcessed", &LogsProcessed)
 	logsExpvars.Set("LogsSent", &LogsSent)
+	logsExpvars.Set("LogsCommitted", &LogsCommitted)
 	logsExpvars.Set("DestinationErrors", &DestinationErrors)
 	logsExpvars.Set("Warnings", expvar.Func(func() interface{} {
 		return strings.Join(status.Get().Messages, ", ")

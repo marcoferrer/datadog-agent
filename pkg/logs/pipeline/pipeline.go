@@ -20,7 +20,7 @@ type Pipeline struct {
 }
 
 // NewPipeline returns a new Pipeline
-func NewPipeline(outputChan chan *message.Message, endpoints *config.Endpoints, destinationsContext *sender.DestinationsContext) *Pipeline {
+func NewPipeline(outputChan chan *message.Message, bufferSize int, endpoints *config.Endpoints, destinationsContext *sender.DestinationsContext) *Pipeline {
 	// initialize the main destination
 	main := sender.NewDestination(endpoints.Main, destinationsContext)
 
@@ -32,11 +32,11 @@ func NewPipeline(outputChan chan *message.Message, endpoints *config.Endpoints, 
 
 	// initialize the sender
 	destinations := sender.NewDestinations(main, additionals)
-	senderChan := make(chan *message.Message, config.ChanSize)
+	senderChan := make(chan *message.Message, bufferSize)
 	sender := sender.NewSender(senderChan, outputChan, destinations)
 
 	// initialize the input chan
-	inputChan := make(chan *message.Message, config.ChanSize)
+	inputChan := make(chan *message.Message, bufferSize)
 
 	// initialize the processor
 	encoder := processor.NewEncoder(endpoints.Main.UseProto)

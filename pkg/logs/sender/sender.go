@@ -59,20 +59,18 @@ func (s *Sender) send(payload *message.Message) {
 		// this call is blocking until payload is sent (or the connection destination context cancelled)
 		err := s.destinations.Main.Send(payload)
 		if err != nil {
+			metrics.DestinationErrors.Add(1)
 			if err == context.Canceled {
-				metrics.DestinationErrors.Add(1)
 				// the context was cancelled, agent is stopping non-gracefully.
 				// drop the message
-				break
+				return
 			}
 			switch err.(type) {
 			case *FramingError:
-				metrics.DestinationErrors.Add(1)
 				// the message can not be framed properly,
 				// drop the message
 				break
 			default:
-				metrics.DestinationErrors.Add(1)
 				// retry as the error can be related to network issues
 				continue
 			}
@@ -85,9 +83,8 @@ func (s *Sender) send(payload *message.Message) {
 			// destinations.
 			destination.Send(payload)
 		}
-
-		metrics.LogsSent.Add(1)
 		break
 	}
+	metrics.LogsSent.Add(1)
 	s.outputChan <- payload
 }

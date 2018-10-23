@@ -12,5 +12,5 @@ import (
 )
 
 func TestMetrics(t *testing.T) {
-	assert.Equal(t, logsExpvars.String(), `{"DestinationErrors": 0, "IsRunning": false, "LogsDecoded": 0, "LogsProcessed": 0, "LogsSent": 0, "Warnings": ""}`)
+	assert.Equal(t, logsExpvars.String(), `{"DestinationErrors": 0, "IsRunning": false, "LogsCollected": 0, "LogsCommitted": 0, "LogsProcessed": 0, "LogsSent": 0, "Warnings": ""}`)
 }
