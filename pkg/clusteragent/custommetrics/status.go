@@ -10,8 +10,9 @@ package custommetrics
 import (
 	"fmt"
 
-	"github.com/DataDog/datadog-agent/pkg/util/kubernetes/apiserver/common"
 	"k8s.io/client-go/kubernetes"
+
+	"github.com/DataDog/datadog-agent/pkg/util/kubernetes/apiserver/common"
 )
 
 // GetStatus returns status info for the Custom Metrics Server.
